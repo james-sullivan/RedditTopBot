@@ -3,11 +3,12 @@ import jsonpickle
 import pymongo
 import config
 
+# https://cloud.mongodb.com/v2/60bc03f093e0cd07ee19e3ad#clusters
+
 
 class User:
 
-    def __init__(self, username: str, subList: Dict[str, int] = None):
-        self.username = username
+    def __init__(self, subList: Dict[str, int] = None):
         self.subs = subList
 
 
@@ -20,7 +21,7 @@ class DBConnection:
 
         with client:
             if config.DEBUG:
-                self._db = client.leaderboard_bot
+                self._db = client.test
             else:
                 self._db = client.leaderboard_bot
 
@@ -57,7 +58,7 @@ class DBConnection:
     # Returns the user that it added
     def _addUser(self, username: str) -> User:
 
-        newUser = User(username=username)
+        newUser = User()
 
         self._users.insert_one({config.data['MongoAtlas']['idName']: username,
                                 config.data['MongoAtlas']['item']: jsonpickle.encode(newUser)})

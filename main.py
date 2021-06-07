@@ -27,6 +27,7 @@ def getTopDailyPostForSub(reddit, subreddit):
 def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
 
     for subreddit in subList:
+
         topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
 
         user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
@@ -35,8 +36,12 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
                    ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
                    '\n\nTop Post Counts: ')
 
+        subTextList = []
+
         for sub in user.subs:
-            message += 'r/' + sub + ' (' + str(user.subs[sub]) + ') '
+            subTextList.append('r/' + sub + ' (' + str(user.subs[sub]) + ') ')
+
+        message += ', '.join(subTextList)
 
         message += (
             "\n\n*This comment was made by a bot*"
