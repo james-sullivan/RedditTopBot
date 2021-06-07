@@ -1,13 +1,13 @@
+import db_connection
 import praw
-import configparser
+import config
 from datetime import date
-import pymongo
 
 # https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
 
 
 def replyTo(content, message):
-    if DEBUG:
+    if config.DEBUG:
         print(message)
     else:
         content.reply(message)
@@ -24,26 +24,19 @@ def getTopDailyPostForSub(reddit, subreddit):
     return topPost
 
 
-def updateLeaderboard(post):
-    if not DEBUG:
-        pass
+def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
 
-
-def getUserData(user):
-    return None
-
-
-def endOfDayUpdate(reddit, subList):
     for subreddit in subList:
         topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
-        updateLeaderboard(topPost)
-        user = getUserData(topPost)
 
-        # print(datetime.utcfromtimestamp(submission.created_utc).strftime('%Y-%m-%d %H:%M:%S'))
+        user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
 
         message = ('Congratulations! Your post was the top post on r/' + subreddit +
                    ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
-                   '\n\nTop Post Counts: ' + subreddit)
+                   '\n\nTop Post Counts: ')
+
+        for sub in user.subs:
+            message += 'r/' + sub + ' (' + str(user.subs[sub]) + ') '
 
         message += (
             "\n\n*This comment was made by a bot*"
@@ -52,22 +45,12 @@ def endOfDayUpdate(reddit, subList):
         replyTo(content=topPost, message=message)
 
 
-def connectToDatabase():
-    client = pymongo.MongoClient(
-        "mongodb+srv://AllAccessUser:" + config['MongoAtlas']['password'] +
-        "@cluster0.4wktl.mongodb.net/" + config['MongoAtlas']['databaseName'] + "?retryWrites=true&w=majority")
-    with client:
-        db = client.leaderboard_bot
-        #db.leaderboard_bot.insert({'name': 'James'})
-
-
 # ------------------------------------------------------
 # Main Code
 # ------------------------------------------------------
 def main():
-    subreddits = ['Grimdank']
 
-    redditConfig = config['Reddit']
+    redditConfig = config.data['Reddit']
 
     reddit = praw.Reddit(
         client_id=redditConfig['client_id'],
@@ -77,13 +60,13 @@ def main():
         password=redditConfig['password']
     )
 
-    # endOfDayUpdate(reddit=reddit, subList=subreddits)
-    connectToDatabase()
+    connection = db_connection.DBConnection(databaseName=config.data['MongoAtlas']['databaseName'],
+                                            password=config.data['MongoAtlas']['password'])
 
+    subList = config.data['App']['subs'].split(',')
 
-config = configparser.ConfigParser()
-config.read('config.cfg')
-DEBUG = bool(config['App']['debug'])
+    endOfDayUpdate(reddit=reddit, subList=subList, connection=connection)
+
 
 if __name__ == '__main__':
     main()
