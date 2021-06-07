@@ -33,7 +33,7 @@ class DBConnection:
         if user is None:
             return None
 
-        return jsonpickle.decode(user.item)
+        return jsonpickle.decode(user[config.data['MongoAtlas']['item']])
 
     # Returns the user that it added the post count to
     def addPostToUser(self, username, subreddit) -> User:
