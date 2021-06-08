@@ -6,6 +6,9 @@ import logging
 
 # https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
 
+# Hosting
+# https://dashboard.heroku.com/apps/reddit-leaderboard-bot
+# https://github.com/james-sullivan/RedditTopBot
 
 def replyTo(content, message):
 
