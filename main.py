@@ -2,11 +2,13 @@ import db_connection
 import praw
 import config
 from datetime import date
+import logging
 
 # https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
 
 
 def replyTo(content, message):
+
     if config.DEBUG:
         print(message)
     else:
@@ -26,13 +28,17 @@ def getTopDailyPostForSub(reddit, subreddit):
 
 def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
 
+    logging.info("Running end of day update:")
+
     for subreddit in subList:
 
         topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
 
+        logging.info('Subreddit: ' + subreddit)
+
         user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
 
-        message = ('Congratulations! Your post was the top post on r/' + subreddit +
+        message = ('Congratulations u/' + topPost.author.name + ' ! Your post was the top post on r/' + subreddit +
                    ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
                    '\n\nTop Post Counts: ')
 
@@ -59,14 +65,14 @@ def main():
 
     reddit = praw.Reddit(
         client_id=redditConfig['client_id'],
-        client_secret=redditConfig['client_secret'],
+        client_secret=config.REDDIT_CLIENT_SECRET,
         user_agent=redditConfig['user_agent'],
         username=redditConfig['username'],
-        password=redditConfig['password']
+        password=config.REDDIT_PASSWORD
     )
 
     connection = db_connection.DBConnection(databaseName=config.data['MongoAtlas']['databaseName'],
-                                            password=config.data['MongoAtlas']['password'])
+                                            password=config.DB_PASSWORD)
 
     subList = config.data['App']['subs'].split(',')
 
