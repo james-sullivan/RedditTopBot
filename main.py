@@ -1,8 +1,12 @@
+import time
+
 import db_connection
 import praw
 import config
 from datetime import date
 import logging
+from praw.exceptions import RedditAPIException
+
 
 # https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
 
@@ -11,11 +15,13 @@ import logging
 # https://github.com/james-sullivan/RedditTopBot
 
 def replyTo(content, message):
-
-    if config.DEBUG:
+    if True: # config.DEBUG:
         print(message)
-    else:
-        content.reply(message)
+  #else:
+  #    try:
+  #        content.reply(message)
+  #    except RedditAPIException as error:
+  #        logging.error(msg=error)
 
 
 def getTopDailyPostForSub(reddit, subreddit):
@@ -30,39 +36,47 @@ def getTopDailyPostForSub(reddit, subreddit):
 
 
 def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
-
     logging.info("Running end of day update:")
 
     for subreddit in subList:
+        try:
+            topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
 
-        topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
+            logging.info('Subreddit: ' + subreddit)
 
-        logging.info('Subreddit: ' + subreddit)
+            user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
 
-        user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
+            message = ('Congratulations u/' + topPost.author.name + ' ! Your post was the top post on r/' + subreddit +
+                       ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
+                       '\n\nTop Post Counts: ')
 
-        message = ('Congratulations u/' + topPost.author.name + ' ! Your post was the top post on r/' + subreddit +
-                   ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
-                   '\n\nTop Post Counts: ')
+            subTextList = []
 
-        subTextList = []
+            for sub in user.subs:
+                subTextList.append('r/' + sub + ' (' + str(user.subs[sub]) + ') ')
 
-        for sub in user.subs:
-            subTextList.append('r/' + sub + ' (' + str(user.subs[sub]) + ') ')
+            message += ', '.join(subTextList)
 
-        message += ', '.join(subTextList)
+            message += (
+                "\n\n*This comment was made by a bot*"
+            )
 
-        message += (
-            "\n\n*This comment was made by a bot*"
-        )
+            replyTo(content=topPost, message=message)
 
-        replyTo(content=topPost, message=message)
+            if not config.DEBUG:
+                # Reddit's API only allows comments to be written once every 2 seconds
+                time.sleep(3)
+
+        except RedditAPIException as error:
+            logging.error(error)
 
 
 # ------------------------------------------------------
 # Main Code
 # ------------------------------------------------------
 def main():
+    print("Main print statement")
+    logging.info("Main logging statement")
 
     redditConfig = config.data['Reddit']
 

@@ -3,7 +3,7 @@ from os import environ
 
 data = configparser.ConfigParser()
 data.read('config.cfg')
-DEBUG = False #  bool(data['App']['debug'])
+DEBUG = bool(data['App']['debug'])
 
 # If we're in debug mode, then we can access the environ varibles
 if DEBUG:
