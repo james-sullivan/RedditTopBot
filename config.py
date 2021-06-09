@@ -1,18 +1,16 @@
 import configparser
 from os import environ
+from dotenv import load_dotenv
+
+load_dotenv()
 
 data = configparser.ConfigParser()
 data.read('config.cfg')
 DEBUG = data['App']['debug'].lower() == 'true'
 
-# If we're in debug mode, then we can access the environ varibles
-if DEBUG:
-    sensitiveData = configparser.ConfigParser()
-    sensitiveData.read('local_sensitive_config.cfg')
-    REDDIT_CLIENT_SECRET = sensitiveData['Reddit']['client_secret']
-    REDDIT_PASSWORD = sensitiveData['Reddit']['password']
-    DB_PASSWORD = sensitiveData['MongoAtlas']['password']
-else:
-    REDDIT_CLIENT_SECRET = environ['REDDIT_CLIENT_SECRET']
-    REDDIT_PASSWORD = environ['REDDIT_PASSWORD']
-    DB_PASSWORD = environ['DB_PASSWORD']
+REDDIT_USER_AGENT = environ['REDDIT_USER_AGENT']
+REDDIT_USERNAME = environ['REDDIT_USERNAME']
+REDDIT_CLIENT_ID = environ['REDDIT_CLIENT_ID']
+REDDIT_CLIENT_SECRET = environ['REDDIT_CLIENT_SECRET']
+REDDIT_PASSWORD = environ['REDDIT_PASSWORD']
+DB_PASSWORD = environ['DB_PASSWORD']

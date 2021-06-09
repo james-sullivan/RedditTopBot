@@ -3,8 +3,8 @@ import db_connection
 import praw
 import config
 from datetime import date
-import logging
 from praw.exceptions import RedditAPIException
+from pymongo.errors import ConnectionFailure
 
 
 # https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
@@ -14,13 +14,13 @@ from praw.exceptions import RedditAPIException
 # https://github.com/james-sullivan/RedditTopBot
 
 def replyTo(content, message):
-    if True: # config.DEBUG:
+    if config.DEBUG:
         print(message)
-  #else:
-  #    try:
-  #        content.reply(message)
-  #    except RedditAPIException as error:
-  #        logging.error(msg=error)
+    else:
+        try:
+            content.reply(message)
+        except RedditAPIException as error:
+            print(error)
 
 
 def getTopDailyPostForSub(reddit, subreddit):
@@ -35,13 +35,13 @@ def getTopDailyPostForSub(reddit, subreddit):
 
 
 def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
-    logging.info("Running end of day update:")
+    print("Running end of day update:")
 
     for subreddit in subList:
         try:
             topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
 
-            logging.info('Subreddit: ' + subreddit)
+            print('Subreddit: ' + subreddit)
 
             user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
 
@@ -67,32 +67,32 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
                 time.sleep(3)
 
         except RedditAPIException as error:
-            logging.error(error)
+            print(error)
 
 
 # ------------------------------------------------------
 # Main Code
 # ------------------------------------------------------
 def main():
-    print("Main print statement")
-    logging.info("Main logging statement")
-
-    redditConfig = config.data['Reddit']
+    print("Start of Main")
 
     reddit = praw.Reddit(
-        client_id=redditConfig['client_id'],
+        client_id=config.REDDIT_CLIENT_ID,
         client_secret=config.REDDIT_CLIENT_SECRET,
-        user_agent=redditConfig['user_agent'],
-        username=redditConfig['username'],
+        user_agent=config.REDDIT_USER_AGENT,
+        username=config.REDDIT_USERNAME,
         password=config.REDDIT_PASSWORD
     )
 
-    connection = db_connection.DBConnection(databaseName=config.data['MongoAtlas']['databaseName'],
-                                            password=config.DB_PASSWORD)
+    try:
+        connection = db_connection.DBConnection(databaseName=config.data['MongoAtlas']['databaseName'],
+                                                password=config.DB_PASSWORD)
 
-    subList = config.data['App']['subs'].split(',')
+        subList = config.data['App']['subs'].split(',')
 
-    endOfDayUpdate(reddit=reddit, subList=subList, connection=connection)
+        endOfDayUpdate(reddit=reddit, subList=subList, connection=connection)
+    except ConnectionFailure as error:
+        print(error)
 
 
 if __name__ == '__main__':
