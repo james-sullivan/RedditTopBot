@@ -9,14 +9,17 @@ from pymongo.errors import ConnectionFailure
 
 # https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
 
-# Hosting
+# Cloud Hosting
 # https://dashboard.heroku.com/apps/reddit-leaderboard-bot
+# Github
 # https://github.com/james-sullivan/RedditTopBot
+# Database
+# https://cloud.mongodb.com/v2/60bc03f093e0cd07ee19e3ad#clusters
 
 def replyTo(content, message):
-    if config.DEBUG:
-        print(message)
-    else:
+    print(message)
+
+    if not config.DEBUG:
         try:
             content.reply(message)
         except RedditAPIException as error:
@@ -70,6 +73,7 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
             print(error)
 
     print('End of endOfDayUpdate')
+
 
 # ------------------------------------------------------
 # Main Code

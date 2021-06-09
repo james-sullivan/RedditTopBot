@@ -4,7 +4,7 @@ import pymongo
 import config
 
 
-# https://cloud.mongodb.com/v2/60bc03f093e0cd07ee19e3ad#clusters
+
 
 
 class User:
