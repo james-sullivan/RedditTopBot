@@ -69,6 +69,7 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
         except RedditAPIException as error:
             print(error)
 
+    print('End of endOfDayUpdate')
 
 # ------------------------------------------------------
 # Main Code
