@@ -4,8 +4,8 @@ from os import environ
 data = configparser.ConfigParser()
 data.read('config.cfg')
 DEBUG = bool(data['App']['debug'])
-print('DEBUG = ', DEBUG)
-print('')
+print('DEBUG =', DEBUG)
+print('data["App"]["debug"] =', data['App']['debug'])
 
 # If we're in debug mode, then we can access the environ varibles
 if DEBUG:
