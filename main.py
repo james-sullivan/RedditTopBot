@@ -1,5 +1,4 @@
 import time
-
 import db_connection
 import praw
 import config
