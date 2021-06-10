@@ -75,6 +75,14 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
     print('End of endOfDayUpdate')
 
 
+subs = ['HistoryMemes', 'PoliticalCompassMemes', 'Art', 'castles', 'dataisbeatiful', 'dndmemes',
+        'Grimdank', 'PixelArt', 'ProgrammerHumor', 'wallstreetbets', 'science', 'todayilearned',
+        'Showerthoughts', 'gifs', 'askscience', 'photoshopbattles', 'history', 'PrequelMemes',
+        'SequelMemes', 'AskReddit', 'videos', 'philosophy', 'StarWars', 'marvelstudios', 'Python',
+        'technology', 'teenagers', 'Minecraft', 'natureismetal', 'NatureIsFuckingLit', 'CatastrophicFailure',
+        '2meirl4meirl', 'Apple', 'Android', 'google', 'programming', 'softwaregore']
+
+
 # ------------------------------------------------------
 # Main Code
 # ------------------------------------------------------
@@ -93,9 +101,7 @@ def main():
         connection = db_connection.DBConnection(databaseName=config.data['MongoAtlas']['databaseName'],
                                                 password=config.DB_PASSWORD)
 
-        subList = config.data['App']['subs'].split(',')
-
-        endOfDayUpdate(reddit=reddit, subList=subList, connection=connection)
+        endOfDayUpdate(reddit=reddit, subList=subs, connection=connection)
     except ConnectionFailure as error:
         print(error)
 

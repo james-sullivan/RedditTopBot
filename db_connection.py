@@ -4,9 +4,6 @@ import pymongo
 import config
 
 
-
-
-
 class User:
 
     def __init__(self, subList: Dict[str, int] = None):
