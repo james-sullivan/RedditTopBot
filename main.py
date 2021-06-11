@@ -41,33 +41,33 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
     print("Running end of day update:")
 
     for subreddit in subList:
+        print('Subreddit: ' + subreddit)
         try:
             topPost = getTopDailyPostForSub(reddit=reddit, subreddit=subreddit)
 
-            print('Subreddit: ' + subreddit)
+            if topPost is not None:
+                user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
 
-            user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
+                message = ('Congratulations u/' + topPost.author.name + ' ! Your post was the top post on r/' + subreddit +
+                           ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
+                           '\n\nTop Post Counts: ')
 
-            message = ('Congratulations u/' + topPost.author.name + ' ! Your post was the top post on r/' + subreddit +
-                       ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
-                       '\n\nTop Post Counts: ')
+                subTextList = []
 
-            subTextList = []
+                for sub in user.subs:
+                    subTextList.append('r/' + sub + ' (' + str(user.subs[sub]) + ') ')
 
-            for sub in user.subs:
-                subTextList.append('r/' + sub + ' (' + str(user.subs[sub]) + ') ')
+                message += ', '.join(subTextList)
 
-            message += ', '.join(subTextList)
+                message += (
+                    "\n\n*This comment was made by a bot*"
+                )
 
-            message += (
-                "\n\n*This comment was made by a bot*"
-            )
+                replyTo(content=topPost, message=message)
 
-            replyTo(content=topPost, message=message)
-
-            if not config.DEBUG:
-                # Reddit's API only allows comments to be written once every 2 seconds
-                time.sleep(3)
+                if not config.DEBUG:
+                    # Reddit's API only allows comments to be written once every 2 seconds
+                    time.sleep(3)
 
         except RedditAPIException as error:
             print(error)
