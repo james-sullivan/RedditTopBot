@@ -77,10 +77,11 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
 
 subs = ['HistoryMemes', 'PoliticalCompassMemes', 'Art', 'castles', 'dataisbeatiful', 'dndmemes',
         'Grimdank', 'PixelArt', 'ProgrammerHumor', 'wallstreetbets', 'science', 'todayilearned',
-        'Showerthoughts', 'gifs', 'askscience', 'photoshopbattles', 'history', 'PrequelMemes',
+        'Showerthoughts', 'gifs', 'photoshopbattles', 'history', 'PrequelMemes',
         'SequelMemes', 'AskReddit', 'videos', 'philosophy', 'StarWars', 'marvelstudios', 'Python',
-        'technology', 'teenagers', 'Minecraft', 'natureismetal', 'NatureIsFuckingLit', 'CatastrophicFailure',
-        '2meirl4meirl', 'Apple', 'Android', 'google', 'programming', 'softwaregore']
+        'technology', 'teenagers', 'Minecraft', 'natureismetal', 'NatureIsFuckingLit',
+        'CatastrophicFailure', '2meirl4meirl', 'Apple', 'Android', 'google', 'programming',
+        'softwaregore']
 
 
 # ------------------------------------------------------
