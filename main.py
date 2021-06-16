@@ -80,7 +80,7 @@ subs = ['HistoryMemes', 'PoliticalCompassMemes', 'Art', 'castles', 'dataisbeatif
         'Showerthoughts', 'gifs', 'photoshopbattles', 'history', 'PrequelMemes',
         'SequelMemes', 'AskReddit', 'videos', 'philosophy', 'StarWars', 'marvelstudios', 'Python',
         'technology', 'teenagers', 'Minecraft', 'natureismetal', 'NatureIsFuckingLit',
-        'CatastrophicFailure', '2meirl4meirl', 'Apple', 'Android', 'google', 'programming',
+        'CatastrophicFailure', '2meirl4meirl', 'Apple', 'Android', 'google',
         'softwaregore']
 
 
