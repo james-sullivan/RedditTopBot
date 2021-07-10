@@ -2,7 +2,7 @@ import time
 import db_connection
 import praw
 import config
-from datetime import date
+from datetime import datetime, timedelta
 from praw.exceptions import RedditAPIException
 from pymongo.errors import ConnectionFailure
 
@@ -49,7 +49,7 @@ def endOfDayUpdate(reddit, subList, connection: db_connection.DBConnection):
                 user = connection.addPostToUser(username=topPost.author.name, subreddit=subreddit)
 
                 message = ('Congratulations u/' + topPost.author.name + ' ! Your post was the top post on r/' + subreddit +
-                           ' today! (' + date.today().strftime("%m/%d/%y") + ')' +
+                           ' today! (' + (datetime.today() - timedelta(days=1)).strftime("%m/%d/%y") + ')' +
                            '\n\nTop Post Counts: ')
 
                 subTextList = []
